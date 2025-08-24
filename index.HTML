@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Hunt Unlimited</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: white;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    
+    header {
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 15px;
+    }
+    
+    .game-info {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 15px;
+    }
+    
+    .info-box {
+      text-align: center;
+    }
+    
+    .info-box h3 {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 5px;
+    }
+    
+    .info-box span {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    #letters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0;
+    }
+    
+    .letter {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      user-select: none;
+    }
+    
+    .letter:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      background: #ffeb3b;
+    }
+    
+    #selectedWord {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 20px 0;
+      min-height: 40px;
+      letter-spacing: 5px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    #submit-btn {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: white;
+    }
+    
+    #clear-btn {
+      background: linear-gradient(135deg, #f44336, #c62828);
+      color: white;
+    }
+    
+    #hint-btn {
+      background: linear-gradient(135deg, #ff9800, #ef6c00);
+      color: white;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    #message {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 15px 0;
+      min-height: 30px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .success {
+      color: #4caf50;
+    }
+    
+    .error {
+      color: #f44336;
+    }
+    
+    #soundToggle {
+      margin-top: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 auto;
+    }
+    
+    .theme-selector {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .theme-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid white;
+      cursor: pointer;
+    }
+    
+    .theme-blue { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+    .theme-green { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+    .theme-orange { background: linear-gradient(135deg, #ff9800, #f44336); }
+    .theme-purple { background: linear-gradient(135deg, #9c27b0, #673ab7); }
+    
+    .celebration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      pointer-events: none;
+      animation: confetti-fall 5s ease-in-out;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    
+    @media (max-width: 500px) {
+      .letter {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Word Hunt Unlimited</h1>
+      <p class="subtitle">Find the hidden word by selecting letters in order</p>
+    </header>
+    
+    <div class="game-info">
+      <div class="info-box">
+        <h3>LEVEL</h3>
+        <span id="level">1</span>
+      </div>
+      <div class="info-box">
+        <h3>SCORE</h3>
+        <span id="score">0</span>
+      </div>
+      <div class="info-box">
+        <h3>WORDS</h3>
+        <span id="wordsFound">0</span>
+      </div>
+    </div>
+    
+    <div id="letters"></div>
+    
+    <div id="selectedWord"></div>
+    
+    <div class="controls">
+      <button id="submit-btn" onclick="checkWord()">
+        <i class="fas fa-check"></i> Submit
+      </button>
+      <button id="clear-btn" onclick="clearSelection()">
+        <i class="fas fa-eraser"></i> Clear
+      </button>
+      <button id="hint-btn" onclick="giveHint()">
+        <i class="fas fa-lightbulb"></i> Hint
+      </button>
+    </div>
+    
+    <div id="message"></div>
+    
+    <button id="soundToggle" onclick="toggleSound()">
+      <i class="fas fa-volume-up"></i> Sound ON
+    </button>
+    
+    <div class="theme-selector">
+      <div class="theme-btn theme-blue" onclick="changeTheme('blue')"></div>
+      <div class="theme-btn theme-green" onclick="changeTheme('green')"></div>
+      <div class="theme-btn theme-orange" onclick="changeTheme('orange')"></div>
+      <div class="theme-btn theme-purple" onclick="changeTheme('purple')"></div>
+    </div>
+  </div>
+  
+  <div class="celebration" id="celebration"></div>
+
+  <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3"></audio>
+  <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+  <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"></audio>
+
+  <script>
+    const dictionary = [
+      "APPLE", "HOUSE", "TRAIN", "WORLD", "LIGHT", "BRAVE", "SMILE", "PLANE",
+      "MUSIC", "STARS", "BEACH", "RIVER", "CLOUD", "EARTH", "FIRE", "STONE",
+      "QUEEN", "KING", "NIGHT", "WATER", "MAGIC", "HEART", "BREAD", "CHAIR",
+      "SWORD", "HAPPY", "POWER", "DREAM", "LION", "TIGER", "ANGEL", "GHOST",
+      "STORM", "PLANT", "CROWN", "SPACE", "LUCKY", "GRASS", "MONEY", "FAITH",
+      "PEACE", "EARLY", "FRUIT", "FISH", "BOOK", "STORY", "GAME", "LEVEL",
+      "MOUSE", "PHONE", "PAPER", "CLOCK", "SPORT", "PARTY", "PLATE", "GLASS"
+    ];
+
+    let currentWord = "";
+    let selectedWord = "";
+    let level = 1;
+    let score = 0;
+    let wordsFound = 0;
+    let soundOn = true;
+    let currentTheme = "blue";
+
+    function startLevel() {
+      document.getElementById("level").innerText = level;
+      document.getElementById("score").innerText = score;
+      document.getElementById("wordsFound").innerText = wordsFound;
+      document.getElementById("message").innerText = "";
+      document.getElementById("selectedWord").innerText = "";
+
+      // Get a new random word
+      currentWord = dictionary[Math.floor(Math.random() * dictionary.length)];
+      
+      // Shuffle the letters
+      let letters = currentWord.split("");
+      for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [letters[i], letters[j]] = [letters[j], letters[i]];
+      }
+
+      // Display the letters grid
+      const lettersDiv = document.getElementById("letters");
+      lettersDiv.innerHTML = "";
+      letters.forEach(letter => {
+        const span = document.createElement("span");
+        span.innerText = letter;
+        span.classList.add("letter");
+        span.onclick = () => {
+          selectedWord += letter;
+          document.getElementById("selectedWord").innerText = selectedWord;
+          playSound('click');
+        };
+        lettersDiv.appendChild(span);
+      });
+    }
+
+    function checkWord() {
+      if (selectedWord === currentWord) {
+        document.getElementById("message").innerText = "🎉 Congratulations! Next Level 👉";
+        document.getElementById("message").className = "success";
+        playSound('success');
+        score += currentWord.length * 10;
+        wordsFound++;
+        level++;
+        
+        // Add celebration
+        createConfetti();
+        
+        setTimeout(startLevel, 2000);
+      } else {
+        document.getElementById("message").innerText = "❌ Try Again!";
+        document.getElementById("message").className = "error";
+        playSound('fail');
+        score = Math.max(0, score - 5);
+        document.getElementById("score").innerText = score;
+      }
+    }
+
+    function clearSelection() {
+      selectedWord = "";
+      document.getElementById("selectedWord").innerText = "";
+      playSound('click');
+    }
+
+    function giveHint() {
+      if (selectedWord.length < currentWord.length) {
+        const nextLetter = currentWord[selectedWord.length];
+        selectedWord += nextLetter;
+        document.getElementById("selectedWord").innerText = selectedWord;
+        playSound('click');
+        
+        // Flash the corresponding letter
+        const letters = document.querySelectorAll('.letter');
+        letters.forEach(letter => {
+          if (letter.textContent === nextLetter) {
+            letter.classList.add('hint');
+            setTimeout(() => {
+              letter.classList.remove('hint');
+            }, 1000);
+          }
+        });
+      }
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      const icon = document.querySelector('#soundToggle i');
+      icon.className = soundOn ? 'fas fa-volume-up' : 'fas fa-volume-mute';
+      document.getElementById("soundToggle").innerHTML = soundOn ? 
+        '<i class="fas fa-volume-up"></i> Sound ON' : 
+        '<i class="fas fa-volume-mute"></i> Sound OFF';
+    }
+
+    function playSound(type) {
+      if (!soundOn) return;
+      
+      const sound = document.getElementById(type + 'Sound');
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log("Audio play failed:", e));
+      }
+    }
+
+    function changeTheme(theme) {
+      currentTheme = theme;
+      const body = document.body;
+      
+      switch(theme) {
+        case 'blue':
+          body.style.background = 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)';
+          break;
+        case 'green':
+          body.style.background = 'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)';
+          break;
+        case 'orange':
+          body.style.background = 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)';
+          break;
+        case 'purple':
+          body.style.background = 'linear-gradient(135deg, #9c27b0 0%, #673ab7 100%)';
+          break;
+      }
+    }
+
+    function createConfetti() {
+      const celebration = document.getElementById('celebration');
+      celebration.innerHTML = '';
+      celebration.style.display = 'block';
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        celebration.appendChild(confetti);
+      }
+      
+      setTimeout(() => {
+        celebration.style.display = 'none';
+      }, 5000);
+    }
+
+    // Start the game when page loads
+    window.onload = function() {
+      startLevel();
+      
+      // Preload audio files
+      const sounds = ['success', 'fail', 'click'];
+      sounds.forEach(sound => {
+        const audio = document.getElementById(sound + 'Sound');
+        audio.volume = 0.5;
+        audio.load();
+      });
+    };
+  </script>
+</body>
+</html>
